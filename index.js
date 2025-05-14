@@ -206,7 +206,7 @@ const colorPalette = [
           button.style.color = "white";
         } else {
           button.style.backgroundColor = "#e2e8f0";
-          button.style.color = "black";
+          button.style.color = "white";
         }
         
         if (state.compareMode && index < 3) {
