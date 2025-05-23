@@ -1,0 +1,178 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #111;
+    color: white;
+}
+
+.wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 40px;
+    margin-bottom: 5px;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-top: 0;
+}
+
+.chartSection {
+    position: relative;
+    height: 450px;
+    margin-bottom: 30px;
+}
+
+.yAxisLabel {
+    position: absolute;
+    transform: rotate(-90deg);
+    left: -40px;
+    top: 50%;
+}
+
+.xAxisLabel {
+    text-align: right;
+    padding-right: 30px;
+}
+
+#chart {
+    width: 100%;
+    height: 100%;
+}
+
+.filterButtons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.filterButtons button {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 20px;
+    color: white;
+    padding: 8px 25px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filterButtons button.active {
+    background-color: #9932CC;
+    border-color: #9932CC;
+}
+
+.cityButtons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.cityBtn {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 20px;
+    color: white;
+    padding: 5px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cityBtn.active {
+    background-color: #FF00FF;
+    border-color: #FF00FF;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #FF00FF, #9932CC, #00CED1, transparent);
+    margin: 40px 0;
+}
+
+.statsSection {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+.statContainer {
+    text-align: center;
+    width: 220px;
+}
+
+.statChart {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.statChart .percentage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+ul {
+    text-align: left;
+    font-size: 14px;
+    padding-left: 0;
+    list-style: none;
+}
+
+li {
+    margin-bottom: 10px;
+    position: relative;
+    padding-left: 15px;
+}
+
+li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: #222;
+    color: white;
+    border: 1px solid #FF00FF;
+    border-radius: 5px;
+    padding: 10px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.axis {
+    color: #555;
+}
+
+.axisLabel {
+    fill: #888;
+}

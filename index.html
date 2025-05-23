@@ -3,16 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>City Pulse 2025</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div id="wrapper"></div>
-
-    <script src="d3.v7.min.js"></script>
+    <div class="wrapper">
+        <div class="header">
+            <h1>CITY PULSE 2025</h1>
+            <h2>Who's dominating the rave scene and who's next?</h2>
+        </div>
+        
+        <div class="chartSection">
+            <div class="yAxisLabel">Earnings</div>
+            <div id="chart"></div>
+            <div class="xAxisLabel">Year</div>
+        </div>
+        
+        <div class="filterButtons">
+            <button id="allBtn" class="active">ALLA</button>
+            <button id="top10Btn">TOP 10</button>
+            <button id="top3Btn">TOP 3</button>
+        </div>
+        
+        <div id="cityButtons" class="cityButtons"></div>
+        
+        <div class="divider"></div>
+        
+        <div class="statsSection">
+            <div class="statContainer">
+                <div id="gigsChart" class="statChart"></div>
+                <h3>Antal gigs</h3>
+                <ul>
+                    <li>Visar hur aktiv staden är som spelplats.</li>
+                    <li>Full ring = flest gigs bland alla städer.</li>
+                    <li>Ger en direkt känsla av hur ofta staden är med.</li>
+                </ul>
+            </div>
+            
+            <div class="statContainer">
+                <div id="revenueChart" class="statChart"></div>
+                <h3>Intäkter totalt</h3>
+                <ul>
+                    <li>Visar hur mycket staden tjänat totalt på spelningarna.</li>
+                    <li>Full ring = högsta cityEarnings bland alla städer.</li>
+                    <li>Svarar på: hur lönsamt är det för staden att ha spelningar?</li>
+                </ul>
+            </div>
+            
+            <div class="statContainer">
+                <div id="audienceChart" class="statChart"></div>
+                <h3>Publik totalt</h3>
+                <ul>
+                    <li>Visar hur många som totalt kommit till gigs i staden.</li>
+                    <li>Full ring = flest besökare totalt.</li>
+                    <li>Ger en känsla av publiktryck, dvs hur populära eventen varit bland folk.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="data.js"></script>
-    <script src="array.js"></script>
     <script src="index.js"></script>
-
 </body>
 </html>
