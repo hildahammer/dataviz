@@ -3,66 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>City Pulse 2025</title>
     <link rel="stylesheet" href="index.css">
+    <title>Document</title>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="header">
-            <h1>CITY PULSE 2025</h1>
-            <h2>Who's dominating the rave scene and who's next?</h2>
-        </div>
-        
-        <div class="chartSection">
-            <div class="yAxisLabel">Earnings</div>
-            <div id="chart"></div>
-            <div class="xAxisLabel">Year</div>
-        </div>
-        
-        <div class="filterButtons">
-            <button id="allBtn" class="active">ALLA</button>
-            <button id="top10Btn">TOP 10</button>
-            <button id="top3Btn">TOP 3</button>
-        </div>
-        
-        <div id="cityButtons" class="cityButtons"></div>
-        
-        <div class="divider"></div>
-        
-        <div class="statsSection">
-            <div class="statContainer">
-                <div id="gigsChart" class="statChart"></div>
-                <h3>Antal gigs</h3>
-                <ul>
-                    <li>Visar hur aktiv staden är som spelplats.</li>
-                    <li>Full ring = flest gigs bland alla städer.</li>
-                    <li>Ger en direkt känsla av hur ofta staden är med.</li>
-                </ul>
-            </div>
-            
-            <div class="statContainer">
-                <div id="revenueChart" class="statChart"></div>
-                <h3>Intäkter totalt</h3>
-                <ul>
-                    <li>Visar hur mycket staden tjänat totalt på spelningarna.</li>
-                    <li>Full ring = högsta cityEarnings bland alla städer.</li>
-                    <li>Svarar på: hur lönsamt är det för staden att ha spelningar?</li>
-                </ul>
-            </div>
-            
-            <div class="statContainer">
-                <div id="audienceChart" class="statChart"></div>
-                <h3>Publik totalt</h3>
-                <ul>
-                    <li>Visar hur många som totalt kommit till gigs i staden.</li>
-                    <li>Full ring = flest besökare totalt.</li>
-                    <li>Ger en känsla av publiktryck, dvs hur populära eventen varit bland folk.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+     <!-- Animated background particles -->
+     <div class="bg-particles" id="particles"></div>
+
+     <div id="wrapper">
+         <div class="header">
+             <div class="skyline">🌃</div>
+             <h1>CITY PULSE 2025</h1>
+             <div class="subtitle">Who's dominating the rave scene and who's next?</div>
+         </div>
+ 
+         <div class="intro-text">
+             Dive into the electrifying world of electronic music across cities worldwide. This interactive dashboard reveals which metropolitan areas have dominated the rave scene from 2015-2024, and uses advanced analytics to predict who will rule the dance floors in 2025. Explore earnings, attendance, and growth trends that shape the global electronic music landscape.
+         </div>
+ 
+         <div class="chart-description">
+             <h4>📊 Interactive Timeline Chart</h4>
+             Hover over the lines below to explore yearly performance for each city. Click the filter buttons to focus on top performers, or select individual cities to compare their trajectories. Each line tells a story of beats, crowds, and revenue that powered the electronic music revolution in that city.
+         </div>
+ 
+         <!-- D3.js chart will be inserted here -->
+         
+         <div class="chart-description">
+             <h4>🎛️ City Controls</h4>
+             Use the buttons below to filter cities by their overall performance, or click individual city names to highlight specific locations on the chart and analytics below.
+         </div>
+ 
+         <!-- Analytics sections will be inserted here -->
+ 
+         <div class="insight-box">
+             <h4>💡 Key Insights</h4>
+             The data reveals fascinating patterns in the global electronic music scene. Metropolitan areas with strong nightlife cultures and large populations tend to dominate, but emerging cities are showing explosive growth rates that could reshape the landscape by 2025. The prediction algorithm considers historical trends, growth momentum, and market saturation to forecast future performance.
+         </div>
+     </div>
     
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="d3.v7.min.js"></script>
     <script src="data.js"></script>
     <script src="index.js"></script>
 </body>
