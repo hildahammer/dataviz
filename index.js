@@ -1,8 +1,11 @@
 const wSvg = 800;
 const hSvg = 500;
+
 const hViz = .8 * hSvg;
 const wViz = .8 * wSvg;
-hPadding = (hSvg - hViz) / 2, wPadding = (wSvg - wViz) / 2;
+
+const hPadding = (hSvg - hViz) / 2
+const wPadding = (wSvg - wViz) / 2;
 
 const svg = d3.select("#wrapper").append("svg")
             .attr("width", wSvg)
