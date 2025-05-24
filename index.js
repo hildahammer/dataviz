@@ -186,14 +186,14 @@ cityHitAreas.on("mouseover", (event, d) => {
 
     let tooltipContent = `<div class="city-name">${d.name}</div>`;
     tooltipContent += `<div style="color: #888; margin-bottom: 10px;">${year}</div>`;
-    tooltipContent += `<div class="stat-row"><span class="icon">💰</span> ${Math.round(yearEarnings / 100)} Kr</div>`;
+    tooltipContent += `<div class="stat-row"><span class="icon"></span> ${Math.round(yearEarnings / 100)} Kr</div>`;
 
     if (yearGigs.length > 0) {
         tooltipContent += `<div class="stat-row"><span class="icon">🎵</span> ${yearGigs.length} gigs</div>`;
         let totalAttendance = yearGigs.reduce((sum, gig) => sum + gig.attendance, 0);
         tooltipContent += `<div class="stat-row"><span class="icon">👥</span> ${totalAttendance.toLocaleString()} attendees</div>`;
     } else {
-        tooltipContent += `<div class="stat-row"><span class="icon">❌</span> No gigs this year</div>`;
+        tooltipContent += `<div class="stat-row"><span class="icon"></span> No gigs this year</div>`;
     }
 
     tooltip.html(tooltipContent)
@@ -391,7 +391,7 @@ function createTopPerformerSection() {
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("🏆 MEST POPULÄRA STÄDER");
+            .text("MEST POPULÄRA STÄDER");
     
     // Hitta top städer baserat på olika mått
     let topEarnings = [...cityDataset].sort((a, b) => b.totalEarnings - a.totalEarnings)[0];
@@ -405,7 +405,7 @@ function createTopPerformerSection() {
     winnerGrid.append("div")
                 .attr("class", "winner-card")
                 .html(`
-                <div class="winner-icon">💰</div>
+                <div class="winner-icon"></div>
                 <div class="winner-title">Högst Intäkter</div>
                 <div class="winner-name">${topEarnings.name}</div>
                 <div class="winner-value">${Math.round(topEarnings.totalEarnings / 100000)}K Kr</div>
@@ -414,7 +414,7 @@ function createTopPerformerSection() {
     winnerGrid.append("div")
                 .attr("class", "winner-card")
                 .html(`
-                <div class="winner-icon">🎵</div>
+                <div class="winner-icon"></div>
                 <div class="winner-title">Flest Gigs</div>
                 <div class="winner-name">${topGigs.name}</div>
                 <div class="winner-value">${topGigs.totalGigs} konserter</div>
@@ -423,7 +423,7 @@ function createTopPerformerSection() {
     winnerGrid.append("div")
                 .attr("class", "winner-card")
                 .html(`
-                <div class="winner-icon">👥</div>
+                <div class="winner-icon"></div>
                 <div class="winner-title">Största Publiken</div>
                 <div class="winner-name">${topAttendance.name}</div>
                 <div class="winner-value">${topAttendance.totalAttendance.toLocaleString()} personer</div>
@@ -432,7 +432,7 @@ function createTopPerformerSection() {
     winnerGrid.append("div")
                 .attr("class", "winner-card")
                 .html(`
-                <div class="winner-icon">📈</div>
+                <div class="winner-icon"></div>
                 <div class="winner-title">Snabbast Tillväxt</div>
                 <div class="winner-name">${topGrowth.name}</div>
                 <div class="winner-value">${(topGrowth.growthRate * 100).toFixed(1)}% per år</div>
@@ -444,7 +444,7 @@ function createGrowthTrendsChart() {
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("📈 TILLVÄXT 2015-2024");
+            .text("TILLVÄXT 2015-2024");
     
     let chartDiv = container.append("div")
                             .attr("id", "growthChart")
@@ -484,7 +484,7 @@ function createPredictionsChart() {
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("🔮 2025 FÖRUTSÄGELSER");
+            .text("2025 FÖRUTSÄGELSER");
     
     let chartDiv = container.append("div")
                             .attr("id", "predictionChart")
