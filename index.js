@@ -1,7 +1,7 @@
-const wSvg = 800;
-const hSvg = 500;
+const wSvg = 1100; // Bas-bredd för design
+const hSvg = 600;
 
-const hViz = .8 * hSvg;
+const hViz = .7 * hSvg;
 const wViz = .8 * wSvg;
 
 const hPadding = (hSvg - hViz) / 2
@@ -116,6 +116,17 @@ let xG = svg.append("g")
             .call(xAxisFunction)
             .attr("transform", `translate(0, ${hPadding + hViz})`);
 
+// X-axel label (År) 
+svg.append("text")
+    .attr("transform", `translate(${wPadding + wViz/2}, ${hPadding + hViz + 50})`)
+    .style("text-anchor", "middle")
+    .style("fill", "#00FFFF")
+    .style("font-size", "16px")
+    .style("font-weight", "600")
+    .style("letter-spacing", "2px")
+    .style("text-shadow", "0 0 10px rgba(0, 255, 255, 0.6)")
+    .text("ÅR");
+
 // Skapa y-axel
 let yAxisFunction = d3.axisLeft(yScale)
 .tickFormat(d => Math.round(d / 100000) + 'K');
@@ -124,6 +135,19 @@ let yG = svg.append("g")
             .attr("class", "axis")
             .call(yAxisFunction)
             .attr("transform", `translate(${wPadding}, 0)`);
+
+// Y-axel label (Intäkter)
+svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", wPadding - 50)
+    .attr("x", 0 - (hPadding + hViz/2))
+    .style("text-anchor", "middle")
+    .style("fill", "#00FFFF")
+    .style("font-size", "16px")
+    .style("font-weight", "600")
+    .style("letter-spacing", "2px")
+    .style("text-shadow", "0 0 10px rgba(0, 255, 255, 0.6)")
+    .text("INTÄKTER");
 
 // Skapa linje-funktionen
 const dMaker = d3.line()
