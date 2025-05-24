@@ -9,6 +9,7 @@ const wPadding = (wSvg - wViz) / 2;
 
 const svg = d3.select("#wrapper").append("svg")
             .attr("width", wSvg)
+            .style("width", "100%")
             .attr("height", hSvg);
 
 // Tooltip
