@@ -55,11 +55,9 @@ for (let city of cityDataset) {
   let lastYear = city.yearlyData[city.yearlyData.length - 1].earnings || 1;
   let years = city.yearlyData.length - 1;
   
-  // Growth rate
   let percentChange = ((lastYear - firstYear) / firstYear) * 100;
   city.growthRate = percentChange / years;
   
-  // Prediction (använder samma variabler)
   let averageYearlyIncrease = (lastYear - firstYear) / years;
   city.predicted2025 = Math.max(0, lastYear + averageYearlyIncrease);
   
