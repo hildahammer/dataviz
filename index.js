@@ -1,22 +1,19 @@
-const wSvg = 1100; // Bas-bredd för design
+const wSvg = 1350;
 const hSvg = 600;
 
 const hViz = .7 * hSvg;
-const wViz = .8 * wSvg;
+const wViz = .85 * wSvg;
 
 const hPadding = (hSvg - hViz) / 2
 const wPadding = (wSvg - wViz) / 2;
 
 const svg = d3.select("#wrapper").append("svg")
-            .attr("width", wSvg)
+            .attr("viewBox", `0 0 ${wSvg} ${hSvg}`) 
             .style("width", "100%")
-            .attr("height", hSvg);
 
-// Tooltip
 const tooltip = d3.select("body").append("div")
                 .attr("class", "tooltip");
 
-// Förbered dataset
 const cityDataset = [];
 for (let city of Cities) {
     const cityID = city.id;
@@ -53,40 +50,27 @@ for (let city of Cities) {
     cityDataset.push(dataset);
 }
 
-// Beräkna tillväxt och 2025 prediction för varje stad
 for (let city of cityDataset) {
-    // Beräkna genomsnittlig årlig tillväxt
-    let firstYear = city.yearlyData[0].earnings || 1;
-    let lastYear = city.yearlyData[city.yearlyData.length - 1].earnings || 1;
-    let years = city.yearlyData.length - 1;
-    
-    city.growthRate = years > 0 ? Math.pow(lastYear / firstYear, 1/years) - 1 : 0;
-    
-    // Förutsäg 2025 med linear regression
-    let xValues = city.yearlyData.map((d, i) => i);
-    let yValues = city.yearlyData.map(d => d.earnings);
-    let n = xValues.length;
-    let sumX = xValues.reduce((a, b) => a + b, 0);
-    let sumY = yValues.reduce((a, b) => a + b, 0);
-    let sumXY = xValues.reduce((sum, x, i) => sum + x * yValues[i], 0);
-    let sumXX = xValues.reduce((sum, x) => sum + x * x, 0);
-    
-    let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-    let intercept = (sumY - slope * sumX) / n;
-    
-    city.predicted2025 = Math.max(0, slope * 10 + intercept); // 10 = index för 2025
-    
-    // Beräkna popularity score (kombination av earnings, gigs, attendance)
-    city.popularityScore = (city.totalEarnings * 0.4) + (city.totalGigs * 50000 * 0.3) + (city.totalAttendance * 100 * 0.3);
+  let firstYear = city.yearlyData[0].earnings || 1;
+  let lastYear = city.yearlyData[city.yearlyData.length - 1].earnings || 1;
+  let years = city.yearlyData.length - 1;
+  
+  // Growth rate
+  let percentChange = ((lastYear - firstYear) / firstYear) * 100;
+  city.growthRate = percentChange / years;
+  
+  // Prediction (använder samma variabler)
+  let averageYearlyIncrease = (lastYear - firstYear) / years;
+  city.predicted2025 = Math.max(0, lastYear + averageYearlyIncrease);
+  
+  city.popularityScore = city.totalEarnings + city.totalGigs + city.totalAttendance;
 }
 
-// Förbered array med alla år
 let years = [];
 for (let year = 2015; year <= 2024; year++) { 
     years.push(year); 
 }
 
-// Hitta max earnings
 let maxEarnings = 0;
 for (let dataset of cityDataset) {
     for (let point of dataset.yearlyData) {
@@ -94,20 +78,16 @@ for (let dataset of cityDataset) {
     }
 }
 
-// Sortera städer efter totala intäkter
 cityDataset.sort((a, b) => b.totalEarnings - a.totalEarnings);
 
-// x-Skala
 let xScale = d3.scaleLinear()
                 .domain([2015, 2024])
                 .range([wPadding, wPadding + wViz]);
 
-// y-Skala  
 let yScale = d3.scaleLinear()
                 .domain([0, maxEarnings * 1.1])
                 .range([hPadding + hViz, hPadding]);
 
-// Skapa x-axel
 let xAxisFunction = d3.axisBottom(xScale)
                         .tickFormat(d3.format('d'))
                         .ticks(10);
@@ -117,7 +97,6 @@ let xG = svg.append("g")
             .call(xAxisFunction)
             .attr("transform", `translate(0, ${hPadding + hViz})`);
 
-// X-axel label (År) 
 svg.append("text")
     .attr("transform", `translate(${wPadding + wViz/2}, ${hPadding + hViz + 50})`)
     .style("text-anchor", "middle")
@@ -128,7 +107,6 @@ svg.append("text")
     .style("text-shadow", "0 0 10px rgba(0, 255, 255, 0.6)")
     .text("ÅR");
 
-// Skapa y-axel
 let yAxisFunction = d3.axisLeft(yScale)
 .tickFormat(d => Math.round(d / 100000) + 'K');
         
@@ -137,7 +115,6 @@ let yG = svg.append("g")
             .call(yAxisFunction)
             .attr("transform", `translate(${wPadding}, 0)`);
 
-// Y-axel label (Intäkter)
 svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", wPadding - 50)
@@ -150,13 +127,11 @@ svg.append("text")
     .style("text-shadow", "0 0 10px rgba(0, 255, 255, 0.6)")
     .text("INTÄKTER");
 
-// Skapa linje-funktionen
 const dMaker = d3.line()
             .x(d => xScale(d.year))
             .y(d => yScale(d.earnings))
             .curve(d3.curveLinear);
 
-// Skapa linjerna
 let cityLines = svg.append("g")
                     .selectAll("path")
                     .data(cityDataset)
@@ -171,7 +146,6 @@ let cityLines = svg.append("g")
                     .attr("d", d => dMaker(d.yearlyData))
                     .style("filter", "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
 
-// Skapa hit areas för hover
 let cityHitAreas = svg.append("g")
                     .selectAll("path")
                     .data(cityDataset)
@@ -186,7 +160,6 @@ let cityHitAreas = svg.append("g")
                     .attr("d", d => dMaker(d.yearlyData))
                     .style("cursor", "pointer");
 
-// Hover-events på hit areas
 cityHitAreas.on("mouseover", (event, d) => {
     d3.select(`#line_${d.id}`)
         .attr("stroke", "#FF00FF")
@@ -211,12 +184,12 @@ cityHitAreas.on("mouseover", (event, d) => {
 
     let tooltipContent = `<div class="city-name">${d.name}</div>`;
     tooltipContent += `<div style="color: #888; margin-bottom: 10px;">${year}</div>`;
-    tooltipContent += `<div class="stat-row"><span class="icon"></span> ${Math.round(yearEarnings / 100)} Kr</div>`;
+    tooltipContent += `<div class="stat-row"><span class="icon">💰</span>${Math.round(yearEarnings / 100)} K per år</div>`;
 
     if (yearGigs.length > 0) {
         tooltipContent += `<div class="stat-row"><span class="icon">🎵</span> ${yearGigs.length} gigs</div>`;
         let totalAttendance = yearGigs.reduce((sum, gig) => sum + gig.attendance, 0);
-        tooltipContent += `<div class="stat-row"><span class="icon">👥</span> ${totalAttendance.toLocaleString()} attendees</div>`;
+        tooltipContent += `<div class="stat-row"><span class="icon">🎫</span> ${totalAttendance.toLocaleString()} Biljetter</div>`;
     } else {
         tooltipContent += `<div class="stat-row"><span class="icon"></span> No gigs this year</div>`;
     }
@@ -245,7 +218,6 @@ cityHitAreas.on("mouseover", (event, d) => {
     updateStatsForSelectedCities();
 });
 
-// Skapa filterknapparna
 d3.select("#wrapper")
     .append("div")
     .attr("id", "filterButtons")
@@ -265,7 +237,6 @@ d3.select("#wrapper")
     d.action();
     });
 
-// Skapa stadsknapparna
 d3.select("#wrapper")
     .append("div")
     .attr("id", "cityButtons")
@@ -284,22 +255,18 @@ d3.select("#wrapper")
     updateStatsForSelectedCities();
     });
 
-// Skapa nya analytics container
 let analyticsContainer = d3.select("#wrapper")
                         .append("div")
                         .attr("id", "analyticsContainer");
 
-// Top performer sektion
 let topPerformerDiv = analyticsContainer.append("div")
                                         .attr("id", "topPerformer")
                                         .attr("class", "analytics-section");
 
-// Growth trends sektion  
 let growthTrendsDiv = analyticsContainer.append("div")
                                         .attr("id", "growthTrends")
                                         .attr("class", "analytics-section");
 
-// 2025 predictions sektion
 let predictionsDiv = analyticsContainer.append("div")
                                         .attr("id", "predictions2025")
                                         .attr("class", "analytics-section");
@@ -307,8 +274,6 @@ let predictionsDiv = analyticsContainer.append("div")
 createTopPerformerSection();
 createGrowthTrendsChart();
 createPredictionsChart();
-
-// FUNKTIONER
 
 function showAllCities() {
     d3.selectAll(".cityBtn").classed("active", false);
@@ -336,21 +301,21 @@ function showTopCities(n) {
     }
     
     cityLines.each(function(d) {
-        let isTop = topCities.some(city => city.id == d.id);
-        d3.select(this)
-            .attr("stroke", isTop ? "#FF00FF" : "#00CED1")
-            .attr("stroke-width", isTop ? 3 : 2)
-            .attr("opacity", isTop ? 1 : 0.7)
-            .attr("visibility", isTop ? "visible" : "hidden")
-            .style("filter", isTop ? 
-            "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))" : 
-            "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
+      let isTop = topCities.some(city => city.id == d.id);
+      d3.select(`#line_${d.id}`)
+          .attr("stroke", isTop ? "#FF00FF" : "#00CED1")
+          .attr("stroke-width", isTop ? 3 : 2)
+          .attr("opacity", isTop ? 1 : 0.7)
+          .attr("visibility", isTop ? "visible" : "hidden")
+          .style("filter", isTop ? 
+          "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))" : 
+          "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
     });
     
     cityHitAreas.each(function(d) {
-        let isTop = topCities.some(city => city.id == d.id);
-        d3.select(this)
-            .attr("visibility", isTop ? "visible" : "hidden");
+      let isTop = topCities.some(city => city.id == d.id);
+      d3.select(`#hitarea_${d.id}`)
+          .attr("visibility", isTop ? "visible" : "hidden");
     });
     
     setBarsOffline();
@@ -358,29 +323,33 @@ function showTopCities(n) {
 
 function updateCityLineVisibility() {
     let activeButtons = d3.selectAll(".cityBtn.active").nodes();
-    let activeCityIds = activeButtons.map(btn => parseInt(btn.id.replace('city_', '')));
-    
+    let activeCityIds = [];
+    for (let i = 0; i < activeButtons.length; i++) {
+        let buttonId = activeButtons[i].id;
+        let cityId = buttonId.split('_')[1]; // tar delen efter '_'
+        activeCityIds.push(Number(cityId));
+    }    
     if (activeCityIds.length == 0) {
         showAllCities();
         return;
     }
     
     cityLines.each(function(d) {
-        let isActive = activeCityIds.includes(d.id);
-        d3.select(this)
-            .attr("stroke", isActive ? "#FF00FF" : "#00CED1")
-            .attr("stroke-width", isActive ? 3 : 2)
-            .attr("opacity", isActive ? 1 : 0.7)
-            .attr("visibility", isActive ? "visible" : "hidden")
-            .style("filter", isActive ? 
-            "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))" : 
-            "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
-    });
+      let isActive = activeCityIds.includes(d.id);
+      d3.select(`#line_${d.id}`)
+          .attr("stroke", isActive ? "#FF00FF" : "#00CED1")
+          .attr("stroke-width", isActive ? 3 : 2)
+          .attr("opacity", isActive ? 1 : 0.7)
+          .attr("visibility", isActive ? "visible" : "hidden")
+          .style("filter", isActive ? 
+          "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))" : 
+          "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
+  });
     
     cityHitAreas.each(function(d) {
-        let isActive = activeCityIds.includes(d.id);
-        d3.select(this)
-            .attr("visibility", isActive ? "visible" : "hidden");
+      let isActive = activeCityIds.includes(d.id);
+      d3.select(`#hitarea_${d.id}`)
+          .attr("visibility", isActive ? "visible" : "hidden");
     });
 }
 
@@ -418,7 +387,6 @@ function createTopPerformerSection() {
             .attr("class", "section-title")
             .text("MEST POPULÄRA STÄDER");
     
-    // Hitta top städer baserat på olika mått
     let topEarnings = [...cityDataset].sort((a, b) => b.totalEarnings - a.totalEarnings)[0];
     let topGigs = [...cityDataset].sort((a, b) => b.totalGigs - a.totalGigs)[0];
     let topAttendance = [...cityDataset].sort((a, b) => b.totalAttendance - a.totalAttendance)[0];
@@ -475,7 +443,6 @@ function createGrowthTrendsChart() {
                             .attr("id", "growthChart")
                             .attr("class", "bar-chart");
     
-    // Sortera efter tillväxt
     let growthData = [...cityDataset].sort((a, b) => b.growthRate - a.growthRate).slice(0, 8);
     let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthRate)));
     
@@ -515,7 +482,6 @@ function createPredictionsChart() {
                             .attr("id", "predictionChart")
                             .attr("class", "bar-chart");
     
-    // Sortera efter 2025 förutsägelse
     let predictionData = [...cityDataset].sort((a, b) => b.predicted2025 - a.predicted2025).slice(0, 8);
     let maxPrediction = Math.max(...predictionData.map(d => d.predicted2025));
     
@@ -548,12 +514,10 @@ function updateGrowthBars(selectedCityIds) {
         let selectedCity = cityDataset.find(city => city.id == cityId);
         
         if (selectedCity) {
-            // Highlighta vald stad i alla charts
             d3.selectAll('.bar-container').classed('highlighted', false);
             d3.select(`#growth_${cityId}`).classed('highlighted', true);
             d3.select(`#prediction_${cityId}`).classed('highlighted', true);
             
-            // Animera tillväxt bars
             let growthData = [...cityDataset].sort((a, b) => b.growthRate - a.growthRate).slice(0, 8);
             let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthRate)));
             
@@ -565,7 +529,6 @@ function updateGrowthBars(selectedCityIds) {
                     .style("width", `${percentage}%`);
             });
             
-            // Animera prediction bars
             let predictionData = [...cityDataset].sort((a, b) => b.predicted2025 - a.predicted2025).slice(0, 8);
             let maxPrediction = Math.max(...predictionData.map(d => d.predicted2025));
             
@@ -601,6 +564,5 @@ function setBarsOffline() {
         .style("width", "0%");
 }
 
-// Initiera med alla städer synliga
 showAllCities();
 d3.select("#allBtn").classed("active", true);
