@@ -37,13 +37,17 @@ for (let city of Cities) {
         
         let yearEarnings = 0;
         for (let gig of cityGigs) {
-            yearEarnings += gig.cityEarnings;
-            dataset.totalEarnings += gig.cityEarnings;
-            dataset.totalGigs += 1;
-            dataset.totalAttendance += gig.attendance;
+            yearEarnings = yearEarnings + gig.cityEarnings ;
+            dataset.totalEarnings = dataset.totalEarnings + gig.cityEarnings;
+            dataset.totalGigs = dataset.totalGigs + 1;
+            dataset.totalAttendance = dataset.totalAttendance + gig.attendance;
         }
         
-        let point = {year: year, earnings: yearEarnings};
+        let point = {
+          year: year, 
+          earnings: yearEarnings
+        };
+
         dataset.yearlyData.push(point);
     }
     
@@ -51,22 +55,16 @@ for (let city of Cities) {
 }
 
 for (let city of cityDataset) {
-  let firstYear = city.yearlyData[0].earnings || 1;
-  let lastYear = city.yearlyData[city.yearlyData.length - 1].earnings || 1;
-  let years = city.yearlyData.length - 1;
   
-  let percentChange = ((lastYear - firstYear) / firstYear) * 100;
-  city.growthRate = percentChange / years;
-  
-  let averageYearlyIncrease = (lastYear - firstYear) / years;
-  city.predicted2025 = Math.max(0, lastYear + averageYearlyIncrease);
-  
-  city.popularityScore = city.totalEarnings + city.totalGigs + city.totalAttendance;
-}
+    let firstYear = city.yearlyData[0].earnings;    
+    let years = city.yearlyData.length - 1;
+    let lastYear = city.yearlyData[city.yearlyData.length - 1].earnings;
 
-let years = [];
-for (let year = 2015; year <= 2024; year++) { 
-    years.push(year); 
+    city.growthEarnings = lastYear - firstYear
+  
+    let averageYearlyIncrease = (lastYear - firstYear) / years;
+    city.averageYearlyIncrease = averageYearlyIncrease;
+    city.predicted2025 = lastYear + averageYearlyIncrease;
 }
 
 let maxEarnings = 0;
@@ -106,7 +104,7 @@ svg.append("text")
     .text("ÅR");
 
 let yAxisFunction = d3.axisLeft(yScale)
-.tickFormat(d => Math.round(d / 100000) + 'K');
+.tickFormat(d => Math.round(d / 1000000) + 'M');
         
 let yG = svg.append("g")
             .attr("class", "axis")
@@ -182,7 +180,7 @@ cityHitAreas.on("mouseover", (event, d) => {
 
     let tooltipContent = `<div class="city-name">${d.name}</div>`;
     tooltipContent += `<div style="color: #888; margin-bottom: 10px;">${year}</div>`;
-    tooltipContent += `<div class="stat-row"><span class="icon">💰</span>${Math.round(yearEarnings / 100)} K per år</div>`;
+    tooltipContent += `<div class="stat-row"><span class="icon">💰</span>${Math.round(yearEarnings)} per år</div>`;
 
     if (yearGigs.length > 0) {
         tooltipContent += `<div class="stat-row"><span class="icon">🎵</span> ${yearGigs.length} gigs</div>`;
@@ -193,8 +191,8 @@ cityHitAreas.on("mouseover", (event, d) => {
     }
 
     tooltip.html(tooltipContent)
-            .style("left", (event.pageX + 15) + "px")
-            .style("top", (event.pageY - 30) + "px")
+            .style("left", (event.pageX - 110) + "px")
+            .style("top", (event.pageY - 200) + "px")
             .style("opacity", 1);
 
     updateGrowthBars([d.id]);
@@ -285,8 +283,6 @@ function showAllCities() {
     
     cityHitAreas
         .attr("visibility", "visible");
-    
-    setBarsOffline();
 }
 
 function showTopCities(n) {
@@ -315,8 +311,6 @@ function showTopCities(n) {
       d3.select(`#hitarea_${d.id}`)
           .attr("visibility", isTop ? "visible" : "hidden");
     });
-    
-    setBarsOffline();
 }
 
 function updateCityLineVisibility() {
@@ -385,11 +379,39 @@ function createTopPerformerSection() {
             .attr("class", "section-title")
             .text("MEST POPULÄRA STÄDER");
     
-    let topEarnings = [...cityDataset].sort((a, b) => b.totalEarnings - a.totalEarnings)[0];
-    let topGigs = [...cityDataset].sort((a, b) => b.totalGigs - a.totalGigs)[0];
-    let topAttendance = [...cityDataset].sort((a, b) => b.totalAttendance - a.totalAttendance)[0];
-    let topGrowth = [...cityDataset].sort((a, b) => b.growthRate - a.growthRate)[0];
-    
+    let topEarnings = cityDataset[0];
+    for (let city of cityDataset) {
+        if (city.totalEarnings > topEarnings.totalEarnings) {
+            topEarnings = city;
+        }
+    }
+
+    let topGigs = cityDataset[0];
+    for (let city of cityDataset) {
+        if (city.totalGigs > topGigs.totalGigs) {
+            topGigs = city;
+        }
+    }
+
+    let topAttendance = cityDataset[0];
+    for (let city of cityDataset) {
+        if (city.totalAttendance > topAttendance.totalAttendance) {
+            topAttendance = city;
+        }
+    }
+
+    let topGrowth = cityDataset[0];
+    for (let city of cityDataset) {
+        if (city.averageYearlyIncrease > topGrowth.averageYearlyIncrease) {
+            topGrowth = city;
+        }
+    }      
+
+    // let topEarnings = [...cityDataset].sort((a, b) => b.totalEarnings - a.totalEarnings)[0];
+    // let topGigs = [...cityDataset].sort((a, b) => b.totalGigs - a.totalGigs)[0];
+    // let topAttendance = [...cityDataset].sort((a, b) => b.totalAttendance - a.totalAttendance)[0];
+    // let topGrowth = [...cityDataset].sort((a, b) => b.averageYearlyIncrease - a.averageYearlyIncrease)[0];
+
     let winnerGrid = container.append("div")
                             .attr("class", "winner-grid");
     
@@ -399,7 +421,7 @@ function createTopPerformerSection() {
                 <div class="winner-icon"></div>
                 <div class="winner-title">Högst Intäkter</div>
                 <div class="winner-name">${topEarnings.name}</div>
-                <div class="winner-value">${Math.round(topEarnings.totalEarnings / 100000)}K Kr</div>
+                <div class="winner-value">${Math.round(topEarnings.totalEarnings)} Kr</div>
                 `);
     
     winnerGrid.append("div")
@@ -419,14 +441,14 @@ function createTopPerformerSection() {
                 <div class="winner-name">${topAttendance.name}</div>
                 <div class="winner-value">${topAttendance.totalAttendance.toLocaleString()} personer</div>
                 `);
-    
+                
     winnerGrid.append("div")
                 .attr("class", "winner-card")
                 .html(`
                 <div class="winner-icon"></div>
-                <div class="winner-title">Snabbast Tillväxt</div>
+                <div class="winner-title">Snabbast Tillväxt Per År</div>
                 <div class="winner-name">${topGrowth.name}</div>
-                <div class="winner-value">${(topGrowth.growthRate * 100).toFixed(1)}% per år</div>
+                <div class="winner-value">${(topGrowth.averageYearlyIncrease).toFixed(0)} Kr</div>
                 `);
 }
 
@@ -435,15 +457,15 @@ function createGrowthTrendsChart() {
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("TILLVÄXT 2015-2024");
+            .text("STÖRST ÖKNING 2015-2024");
     
     let chartDiv = container.append("div")
                             .attr("id", "growthChart")
                             .attr("class", "bar-chart");
     
-    let growthData = [...cityDataset].sort((a, b) => b.growthRate - a.growthRate).slice(0, 8);
-    let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthRate)));
-    
+    let growthData = [...cityDataset].sort((a, b) => b.growthEarnings - a.growthEarnings).slice(0, 8);
+    let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthEarnings))); 
+
     growthData.forEach(city => {
         let barContainer = chartDiv.append("div")
                                     .attr("class", "bar-container")
@@ -456,16 +478,18 @@ function createGrowthTrendsChart() {
         let barWrapper = barContainer.append("div")
                                     .attr("class", "bar-wrapper");
         
+        let percentage = Math.abs(city.growthEarnings) / maxGrowth * 100;
+        
         let barFill = barWrapper.append("div")
                                 .attr("class", "bar-fill growth-bar")
-                                .style("width", "0%")
-                                .style("background", city.growthRate >= 0 ? 
+                                .style("width", `${percentage}%`)  
+                                .style("background", city.growthEarnings >= 0 ? 
                                     "linear-gradient(90deg, #00CED1, #20B2AA)" : 
                                     "linear-gradient(90deg, #FF4444, #CC0000)");
         
         barContainer.append("div")
                     .attr("class", "bar-value")
-                    .text(`${(city.growthRate * 100).toFixed(1)}%`);
+                    .text(`${(city.growthEarnings)} Kr`);
     });
 }
 
@@ -474,7 +498,7 @@ function createPredictionsChart() {
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("2025 FÖRUTSÄGELSER");
+            .text("INTÄKTSPROGNOS 2025"); //vad vi tror den kommer tjäna nästa år
     
     let chartDiv = container.append("div")
                             .attr("id", "predictionChart")
@@ -495,14 +519,16 @@ function createPredictionsChart() {
         let barWrapper = barContainer.append("div")
                                     .attr("class", "bar-wrapper");
         
+        let percentage = city.predicted2025 / maxPrediction * 100;
+        
         let barFill = barWrapper.append("div")
                                 .attr("class", "bar-fill prediction-bar")
-                                .style("width", "0%")
+                                .style("width", `${percentage}%`)  
                                 .style("background", "linear-gradient(90deg, #9932CC, #FF00FF)");
         
         barContainer.append("div")
                     .attr("class", "bar-value")
-                    .text(`${Math.round(city.predicted2025 / 100)}K Kr`);
+                    .text(`${Math.round(city.predicted2025)} Kr`);
     });
 }
 
@@ -516,11 +542,11 @@ function updateGrowthBars(selectedCityIds) {
             d3.select(`#growth_${cityId}`).classed('highlighted', true);
             d3.select(`#prediction_${cityId}`).classed('highlighted', true);
             
-            let growthData = [...cityDataset].sort((a, b) => b.growthRate - a.growthRate).slice(0, 8);
-            let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthRate)));
+            let growthData = [...cityDataset].sort((a, b) => b.growthEarnings - a.growthEarnings).slice(0, 8);
+            let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthEarnings)));
             
             growthData.forEach(city => {
-                let percentage = Math.abs(city.growthRate) / maxGrowth * 100;
+                let percentage = Math.abs(city.growthEarnings) / maxGrowth * 100;
                 d3.select(`#growth_${city.id} .bar-fill`)
                     .transition()
                     .duration(800)
@@ -538,9 +564,7 @@ function updateGrowthBars(selectedCityIds) {
                     .style("width", `${percentage}%`);
             });
         }
-    } else {
-        setBarsOffline();
-    }
+    } 
 }
 
 function updateStatsForSelectedCities() {
@@ -549,17 +573,7 @@ function updateStatsForSelectedCities() {
     
     if (activeCityIds.length == 1) {
         updateGrowthBars(activeCityIds);
-    } else {
-        setBarsOffline();
-    }
-}
-
-function setBarsOffline() {
-    d3.selectAll('.bar-container').classed('highlighted', false);
-    d3.selectAll('.bar-fill')
-        .transition()
-        .duration(500)
-        .style("width", "0%");
+    } 
 }
 
 showAllCities();
