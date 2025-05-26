@@ -176,7 +176,7 @@ function createTopPerformerSection() {
                 `);
 }
 
-function createGrowthTrendsChart() {
+function createRevenueTrendsChart() {
     let container = d3.select("#growthTrends");
     
     container.append("h3")
@@ -302,7 +302,7 @@ function updateStatsForSelectedCities() {
 
 function fillGraphs () {
     createTopPerformerSection();
-    createGrowthTrendsChart();
+    createRevenueTrendsChart();
     createPredictionsChart();
     
     showAllCities();
