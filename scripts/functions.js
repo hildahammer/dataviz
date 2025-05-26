@@ -136,12 +136,6 @@ function createTopPerformerSection() {
     }
     }      
 
-
-    // let topEarnings = [...cityDataset].sort((a, b) => b.totalEarnings - a.totalEarnings)[0];
-    // let topGigs = [...cityDataset].sort((a, b) => b.totalGigs - a.totalGigs)[0];
-    // let topAttendance = [...cityDataset].sort((a, b) => b.totalAttendance - a.totalAttendance)[0];
-    // let topGrowth = [...cityDataset].sort((a, b) => b.averageYearlyIncrease - a.averageYearlyIncrease)[0];
-
     let winnerGrid = container.append("div")
                             .attr("class", "winner-grid");
     
@@ -181,7 +175,6 @@ function createTopPerformerSection() {
                 <div class="winner-value">${(topGrowth.averageYearlyIncrease).toFixed(0)} Kr</div>
                 `);
 }
-
 
 function createGrowthTrendsChart() {
     let container = d3.select("#growthTrends");
@@ -224,14 +217,12 @@ function createGrowthTrendsChart() {
     });
 }
 
-
-
 function createPredictionsChart() {
     let container = d3.select("#predictions2025");
     
     container.append("h3")
             .attr("class", "section-title")
-            .text("INTÄKTSPROGNOS 2025"); //vad vi tror den kommer tjäna nästa år
+            .text("INTÄKTSPROGNOS 2025");
     
     let chartDiv = container.append("div")
                             .attr("id", "predictionChart")
@@ -264,8 +255,6 @@ function createPredictionsChart() {
                     .text(`${Math.round(city.predicted2025)} Kr`);
     });
 }
-
-
 
 function updateGrowthBars(selectedCityIds) {
     if (selectedCityIds && selectedCityIds.length == 1) {
@@ -302,7 +291,6 @@ function updateGrowthBars(selectedCityIds) {
     } 
 }
 
-
 function updateStatsForSelectedCities() {
     let activeButtons = d3.selectAll(".cityBtn.active").nodes();
     let activeCityIds = activeButtons.map(btn => parseInt(btn.id.replace('city_', '')));
@@ -310,4 +298,13 @@ function updateStatsForSelectedCities() {
     if (activeCityIds.length == 1) {
         updateGrowthBars(activeCityIds);
     } 
+}
+
+function fillGraphs () {
+    createTopPerformerSection();
+    createGrowthTrendsChart();
+    createPredictionsChart();
+    
+    showAllCities();
+    d3.select("#allBtn").classed("active", true);
 }

@@ -26,7 +26,6 @@ body {
     border-radius: 25px;
 }
 
-
 .header h1 {
     color: #FFFF;
     font-weight: 300;
@@ -35,14 +34,6 @@ body {
     letter-spacing: 9px;
     margin-bottom: 15px;
     text-shadow: 0 0 40px rgba(0, 206, 209, 0.6);
-}
-
-.header .subtitle {
-    font-style: normal;
-    font-size: 20px; 
-    color: #FFFF;
-    font-weight: 300;
-    letter-spacing: 1px;
 }
 
 .intro-text {
