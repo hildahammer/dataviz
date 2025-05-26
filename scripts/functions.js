@@ -259,8 +259,34 @@ function createRevenueTrendsChart() {
                             .attr("id", "growthChart")
                             .attr("class", "bar-chart");
     
-    let growthData = [...cityDataset].sort((a, b) => b.growthEarnings - a.growthEarnings).slice(0, 8);
-    let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthEarnings))); 
+    let growthData = [];
+    for (let i = 0; i < cityDataset.length; i++) {
+        growthData.push(cityDataset[i]);
+    }
+
+    growthData.sort(function(a, b) {
+        if (b.growthEarnings > a.growthEarnings) {
+            return 1;
+        } else if (b.growthEarnings < a.growthEarnings) {
+            return -1;
+        } else {
+            return 0;
+        }
+    });
+
+    let top8Cities = [];
+    for (let i = 0; i < 8 && i < growthData.length; i++) {
+        top8Cities.push(growthData[i]);
+    }
+    growthData = top8Cities;
+
+    let maxGrowth = 0;
+    for (let i = 0; i < growthData.length; i++) {
+        let absoluteValue = Math.abs(growthData[i].growthEarnings);
+        if (absoluteValue > maxGrowth) {
+            maxGrowth = absoluteValue;
+        }
+    }
 
     growthData.forEach(city => {
         let barContainer = chartDiv.append("div")
