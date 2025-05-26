@@ -45,7 +45,7 @@ function updateCityLineVisibility() {
     let activeCityIds = [];
     for (let i = 0; i < activeButtons.length; i++) {
         let buttonId = activeButtons[i].id;
-        let cityId = buttonId.split('_')[1]; // tar delen efter '_'
+        let cityId = buttonId.split('_')[1]; 
         activeCityIds.push(Number(cityId));
     }    
     if (activeCityIds.length == 0) {
@@ -204,12 +204,12 @@ function createGrowthTrendsChart() {
         
         let percentage = Math.abs(city.growthEarnings) / maxGrowth * 100;
         
-        let barFill = barWrapper.append("div")
-                                .attr("class", "bar-fill growth-bar")
-                                .style("width", `${percentage}%`)  
-                                .style("background", city.growthEarnings >= 0 ? 
-                                    "linear-gradient(90deg, #00CED1, #20B2AA)" : 
-                                    "linear-gradient(90deg, #FF4444, #CC0000)");
+        barWrapper.append("div")
+                    .attr("class", "bar-fill growth-bar")
+                    .style("width", `${percentage}%`)  
+                    .style("background", city.growthEarnings >= 0 ? 
+                        "linear-gradient(90deg, #00CED1, #20B2AA)" : 
+                        "linear-gradient(90deg, #FF4444, #CC0000)");
         
         barContainer.append("div")
                     .attr("class", "bar-value")
@@ -245,11 +245,11 @@ function createPredictionsChart() {
         
         let percentage = city.predicted2025 / maxPrediction * 100;
         
-        let barFill = barWrapper.append("div")
-                                .attr("class", "bar-fill prediction-bar")
-                                .style("width", `${percentage}%`)  
-                                .style("background", "linear-gradient(90deg, #9932CC, #FF00FF)");
-        
+        barWrapper.append("div")
+                    .attr("class", "bar-fill prediction-bar")
+                    .style("width", `${percentage}%`)  
+                    .style("background", "linear-gradient(90deg, #9932CC, #FF00FF)");
+
         barContainer.append("div")
                     .attr("class", "bar-value")
                     .text(`${Math.round(city.predicted2025)} Kr`);
