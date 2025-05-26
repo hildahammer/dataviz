@@ -282,7 +282,7 @@ function createRevenueTrendsChart() {
 
     let maxGrowth = 0;
     for (let i = 0; i < growthData.length; i++) {
-        let absoluteValue = Math.abs(growthData[i].growthEarnings);
+        let absoluteValue = growthData[i].growthEarnings;
         if (absoluteValue > maxGrowth) {
             maxGrowth = absoluteValue;
         }
@@ -300,7 +300,7 @@ function createRevenueTrendsChart() {
         let barWrapper = barContainer.append("div")
                                     .attr("class", "bar-wrapper");
         
-        let percentage = Math.abs(city.growthEarnings) / maxGrowth * 100;
+        let percentage = city.growthEarnings / maxGrowth * 100;
         
         barWrapper.append("div")
                     .attr("class", "bar-fill growth-bar")
@@ -364,20 +364,52 @@ function updateGrowthBars(selectedCityIds) {
             d3.select(`#growth_${cityId}`).classed('highlighted', true);
             d3.select(`#prediction_${cityId}`).classed('highlighted', true);
             
-            let growthData = [...cityDataset].sort((a, b) => b.growthEarnings - a.growthEarnings).slice(0, 8);
-            let maxGrowth = Math.max(...growthData.map(d => Math.abs(d.growthEarnings)));
+            let growthData = [];
+            for (let i = 0; i < cityDataset.length; i++) {
+                growthData.push(cityDataset[i]);
+            }
+
+            growthData.sort(function(cityA, cityB) {
+                return cityB.growthEarnings - cityA.growthEarnings;
+            });
+
+            let top8Cities = [];
+            for (let i = 0; i < 8 && i < growthData.length; i++) {
+                top8Cities.push(growthData[i]);
+            }
+            growthData = top8Cities;
+
+
+            let maxGrowth = 0;
+            for (let i = 0; i < growthData.length; i++) {
+                let currentEarnings = growthData[i].growthEarnings;
+                if (i === 0 || currentEarnings > maxGrowth) {
+                    maxGrowth = currentEarnings;
+                }
+            }
             
             growthData.forEach(city => {
-                let percentage = Math.abs(city.growthEarnings) / maxGrowth * 100;
+                let percentage = city.growthEarnings / maxGrowth * 100;
                 d3.select(`#growth_${city.id} .bar-fill`)
                     .transition()
                     .duration(800)
                     .style("width", `${percentage}%`);
             });
             
-            let predictionData = [...cityDataset].sort((a, b) => b.predicted2025 - a.predicted2025).slice(0, 8);
-            let maxPrediction = Math.max(...predictionData.map(d => d.predicted2025));
-            
+            let predictionData = cityDataset.slice();
+            predictionData.sort(function(cityA, cityB) {
+            return cityB.predicted2025 - cityA.predicted2025;
+            });
+
+            predictionData = predictionData.slice(0, 8);
+
+            let maxPrediction = predictionData[0].predicted2025;
+            for (let i = 1; i < predictionData.length; i++) {
+                if (predictionData[i].predicted2025 > maxPrediction) {
+                    maxPrediction = predictionData[i].predicted2025;
+                }
+            }            
+
             predictionData.forEach(city => {
                 let percentage = city.predicted2025 / maxPrediction * 100;
                 d3.select(`#prediction_${city.id} .bar-fill`)

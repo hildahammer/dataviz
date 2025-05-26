@@ -107,7 +107,12 @@ cityHitAreas.on("mouseover", (event, d) => {
 
     if (yearGigs.length > 0) {
         tooltipContent += `<div class="stat-row"><span class="icon">🎵</span> ${yearGigs.length} gigs</div>`;
-        let totalAttendance = yearGigs.reduce((sum, gig) => sum + gig.attendance, 0);
+
+        let totalAttendance = 0;
+        for (let i = 0; i < yearGigs.length; i++) {
+            totalAttendance = totalAttendance + yearGigs[i].attendance;
+        }
+                
         tooltipContent += `<div class="stat-row"><span class="icon">🎫</span> ${totalAttendance.toLocaleString()} Biljetter</div>`;
     } else {
         tooltipContent += `<div class="stat-row"><span class="icon"></span> No gigs this year</div>`;
