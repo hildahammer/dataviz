@@ -22,21 +22,47 @@ function showTopCities(n) {
     }
     
     cityLines.each(function(d) {
-      let isTop = topCities.some(city => city.id == d.id);
-      d3.select(`#line_${d.id}`)
-          .attr("stroke", isTop ? "#FF00FF" : "#00CED1")
-          .attr("stroke-width", isTop ? 3 : 2)
-          .attr("opacity", isTop ? 1 : 0.7)
-          .attr("visibility", isTop ? "visible" : "hidden")
-          .style("filter", isTop ? 
-          "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))" : 
-          "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
+        let isTopCity = false;
+        for (let i = 0; i < topCities.length; i++) {
+            if (topCities[i].id == d.id) {
+                isTopCity = true;
+                break;
+            }
+        }
+
+        let currentLine = d3.select(`#line_${d.id}`);
+        
+        if (isTopCity) {
+            currentLine.attr("stroke", "#FF00FF")
+                       .attr("stroke-width", 3)
+                       .attr("opacity", 1)
+                       .attr("visibility", "visible")
+                       .style("filter", "drop-shadow(0 0 10px rgba(255, 0, 255, 0.8))");
+        } 
+        else {
+            currentLine.attr("stroke", "#00CED1")
+                       .attr("stroke-width", 2)
+                       .attr("opacity", 0.7)
+                       .attr("visibility", "hidden")
+                       .style("filter", "drop-shadow(0 0 5px rgba(0, 206, 209, 0.5))");
+        }
     });
     
+    
     cityHitAreas.each(function(d) {
-      let isTop = topCities.some(city => city.id == d.id);
-      d3.select(`#hitarea_${d.id}`)
-          .attr("visibility", isTop ? "visible" : "hidden");
+        let isTop = false;
+        for (let i = 0; i < topCities.length; i++) {
+            if (topCities[i].id == d.id) {
+                isTop = true;
+                break;
+            }
+        }
+        
+        if (isTop) {
+            d3.select(`#hitarea_${d.id}`).attr("visibility", "visible");
+        } else {
+            d3.select(`#hitarea_${d.id}`).attr("visibility", "hidden");
+        }
     });
 }
 
@@ -72,6 +98,7 @@ function updateCityLineVisibility() {
     });
 }
 
+// ORIGINAL KOD (avancerad med some/every):
 function updateFilterButtonStates() {
     let activeCities = d3.selectAll(".cityBtn.active").nodes();
     let activeCount = activeCities.length;
@@ -94,6 +121,51 @@ function updateFilterButtonStates() {
             activeCities.some(btn => btn.id === `city_${city.id}`)
         );
         if (isExactlyTopTen) {
+            d3.select("#top10Btn").classed("active", true);
+        }
+    }
+}
+
+function updateFilterButtonStates() {
+    let activeCities = d3.selectAll(".cityBtn.active").nodes();
+    let activeCount = activeCities.length;
+    
+    d3.selectAll("#filterButtons button").classed("active", false);
+    
+    if (activeCount == 0) {
+        d3.select("#allBtn").classed("active", true);
+    } 
+    else if (activeCount == 3) {
+        let topThreeCities = cityDataset.slice(0, 3);
+        
+        let matchingCities = 0;
+        for (let topCity of topThreeCities) {
+            for (let activeButton of activeCities) {
+                if (activeButton.id === `city_${topCity.id}`) {
+                    matchingCities++;
+                    break; 
+                }
+            }
+        }
+        
+        if (matchingCities == 3) {
+            d3.select("#top3Btn").classed("active", true);
+        }
+    } 
+    else if (activeCount == 10) {
+        let topTenCities = cityDataset.slice(0, 10);
+        
+        let matchingCities = 0;
+        for (let topCity of topTenCities) {
+            for (let activeButton of activeCities) {
+                if (activeButton.id === `city_${topCity.id}`) {
+                    matchingCities++;
+                    break;
+                }
+            }
+        }
+        
+        if (matchingCities == 10) {
             d3.select("#top10Btn").classed("active", true);
         }
     }
